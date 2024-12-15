@@ -3,6 +3,8 @@ import "@/ui/globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { BlockSidebar } from "@/ui/components/BlockSidebar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { initialEdges, initialNodes } from "./lib/initialData";
+import { ReactFlowProvider } from "@xyflow/react";
 
 
 export const metadata: Metadata = {
@@ -17,15 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-      >
-        <SidebarProvider>
-          <BlockSidebar />
-          <main>
-            <SidebarTrigger />
-            {children}
-          </main>
-        </SidebarProvider>
+      <body>
+        <ReactFlowProvider>
+          <main>{children}</main>
+        </ReactFlowProvider>
       </body>
     </html>
   );
