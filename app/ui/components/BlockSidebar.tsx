@@ -6,14 +6,16 @@ interface IBlockSidebarProps {
     setnodes: MouseEventHandler<HTMLButtonElement>
 };
 
+
 export const BlockSidebar: FC<IBlockSidebarProps> = (props) => {
     return (
         <div>
-            <Sidebar>
-                <SidebarHeader>Block Sidebar</SidebarHeader>
-                <SidebarContent>
-                    <SidebarGroup>
-                        <Button className="p-8" variant={"default"} onClick={props.setnodes}></Button>
+            <Sidebar >
+                <SidebarHeader>Triggers</SidebarHeader>
+                <SidebarContent style={{ scrollbarWidth: "none" }}>
+                    <SidebarGroup className="flex flex-row w-full">
+                        <Button className="w-full py-8 mx-2" variant={"default"} onClick={props.setnodes} >Add</Button>
+                        <Button className="w-full py-8 mx-2" variant={"default"} >Delete</Button>
                     </SidebarGroup>
                     <SidebarGroup />
                 </SidebarContent>

@@ -3,6 +3,7 @@ export const initialNodes = [
         id: '1',
         position: { x: 0, y: 0 },
         data: { label: 'Hello' },
+        type: "default"
     },
     {
         id: '2',

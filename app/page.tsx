@@ -1,12 +1,16 @@
 "use client"
 import { addEdge, Background, Connection, Controls, Edge, Node, ReactFlow, ReactFlowProvider, useEdgesState, useNodesState, useReactFlow } from "@xyflow/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import '@xyflow/react/dist/style.css';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { initialNodes, initialEdges } from "./lib/initialData";
+import { initialNodes, initialEdges } from "@/lib/initialData";
 import { BlockSidebar } from "./ui/components/BlockSidebar";
+import FlowNode from "./ui/components/FlowNode";
+import { FlowNodeData } from "./lib/types";
+import "@xyflow/react/dist/style.css";
 export default function Home() {
 
+  const nodeTypes = useMemo(() => ({ flowNode: FlowNode }), []);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
   const [isAddingNode, setIsAddingNode] = useState(false);
@@ -20,25 +24,25 @@ export default function Home() {
   const handleMainClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isAddingNode) return;
     const canvasPosition = reactFlowInstance.screenToFlowPosition({
-      x: event.clientX - (nodes[0].measured?.width ?? 0),
-      y: event.clientY - (nodes[0].measured?.height ?? 0),
+      x: event.clientX - 100,
+      y: event.clientY,
     })
 
     const newNode: Node = {
       id: `node-${nodes.length + 1}`,
       position: canvasPosition,
-      data: { label: `Node ${nodes.length + 1}` },
-      type: "default", // React Flow node type
+      data: { trigger: "hello", response: "world", },
+      type: "flowNode", // React Flow node type
     };
 
 
     setNodes((prevNodes) => [...prevNodes, newNode]);
-    console.log(nodes);
     setIsAddingNode(false); // Disable node-adding mode
     setPreviewPosition(null)
   };
 
   const handleConnect = (params: Edge | Connection) => {
+
     setEdges((prevEdges) => addEdge(params, prevEdges));
   };
 
@@ -48,7 +52,7 @@ export default function Home() {
 
     // Update preview node position based on cursor
     const canvasPosition = ({
-      x: event.clientX - 255,
+      x: event.clientX,
       y: event.clientY,
     });
     setPreviewPosition(canvasPosition);
@@ -58,7 +62,7 @@ export default function Home() {
       <BlockSidebar setnodes={handleAddNode} />
       <div>
         <div className="h-screen w-screen" onClick={handleMainClick} onMouseMove={handleMouseMove}>
-          <ReactFlow nodes={nodes} edges={edges} draggable={true} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onConnect={handleConnect} fitView>
+          <ReactFlow nodeTypes={nodeTypes} nodes={nodes} edges={edges} draggable={true} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onConnect={handleConnect} fitView>
             <Background />
             <Controls />
             {isAddingNode && previewPosition && (
