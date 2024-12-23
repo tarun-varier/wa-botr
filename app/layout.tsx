@@ -20,9 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ReactFlowProvider>
-          <main>{children}</main>
-        </ReactFlowProvider>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <ReactFlowProvider>
+            <main>{children}</main>
+          </ReactFlowProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -24,8 +24,8 @@ export default function Home() {
   const handleMainClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isAddingNode) return;
     const canvasPosition = reactFlowInstance.screenToFlowPosition({
-      x: event.clientX - 100,
-      y: event.clientY,
+      x: event.clientX - 100 * reactFlowInstance.getZoom(),
+      y: event.clientY
     })
 
     const newNode: Node = {
@@ -52,16 +52,17 @@ export default function Home() {
 
     // Update preview node position based on cursor
     const canvasPosition = ({
-      x: event.clientX,
+      x: event.clientX - 250,
       y: event.clientY,
     });
     setPreviewPosition(canvasPosition);
   };
+
   return (
     <SidebarProvider>
       <BlockSidebar setnodes={handleAddNode} />
       <div>
-        <div className="h-screen w-screen" onClick={handleMainClick} onMouseMove={handleMouseMove}>
+        <div className="h-screen w-screen" onClick={handleMainClick} onMouseMove={handleMouseMove} onDragStart={(event) => event.preventDefault()}>
           <ReactFlow nodeTypes={nodeTypes} nodes={nodes} edges={edges} draggable={true} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onConnect={handleConnect} fitView>
             <Background />
             <Controls />
