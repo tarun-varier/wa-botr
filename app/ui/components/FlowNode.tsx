@@ -1,6 +1,6 @@
 import React from 'react';
 import { Handle, Position, Node, NodeProps } from '@xyflow/react';
-import { FlowNodeData } from '@/app/lib/types';
+import { IFlowNode } from '@/app/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -9,7 +9,7 @@ import { EditNode } from './EditNode';
 import { Delete, Trash, Trash2 } from 'lucide-react';
 
 
-const FlowNode = ({ id, data }: NodeProps) => {
+const FlowNode = ({ id, data }: NodeProps<IFlowNode>) => {
     return (
         <Card className={"w-[200px]"}>
             <CardContent className='p-4 pt-0'>
@@ -17,7 +17,7 @@ const FlowNode = ({ id, data }: NodeProps) => {
                 <div className="preview-section">
                     <label>Trigger:</label>
                     <div className="flex w-full max-w-sm items-center space-x-2">
-                        <Input disabled value={"hello"} className='text-black disabled:cursor-pointer' />
+                        <Input disabled value={data.trigger?.label} className='disabled:cursor-pointer' />
                     </div>
                 </div>
 
@@ -25,12 +25,12 @@ const FlowNode = ({ id, data }: NodeProps) => {
                 <div className="preview-section">
                     <label>Response:</label>
                     <div className="flex w-full max-w-sm items-center space-x-2">
-                        <Input disabled value={"world"} className='text-black disabled:cursor-pointer' />
+                        <Input disabled value={data.response?.label} className='disabled:cursor-pointer' />
                     </div>
                 </div>
 
                 <div className="w-full flex flex-row">
-                    <EditNode />
+                    <EditNode nodeData={data} updateNodeData={data.updateNodeData ? data.updateNodeData : () => { }} />
                     <Button className="w-full"><Trash2 /></Button>
                 </div>
             </CardContent>

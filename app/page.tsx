@@ -1,16 +1,18 @@
 "use client"
-import { addEdge, Background, Connection, Controls, Edge, Node, ReactFlow, ReactFlowProvider, useEdgesState, useNodesState, useReactFlow } from "@xyflow/react";
-import { useMemo, useState } from "react";
+import { addEdge, Background, Connection, Controls, Edge, Node, NodeTypes, ReactFlow, ReactFlowProvider, useEdgesState, useNodesState, useReactFlow } from "@xyflow/react";
+import { useCallback, useMemo, useState } from "react";
 import '@xyflow/react/dist/style.css';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { initialNodes, initialEdges } from "@/lib/initialData";
 import { BlockSidebar } from "./ui/components/BlockSidebar";
 import FlowNode from "./ui/components/FlowNode";
-import { FlowNodeData } from "./lib/types";
+import { IFlowNode } from "./lib/types";
 import "@xyflow/react/dist/style.css";
+import { messageTypes } from "./lib/progData";
 export default function Home() {
 
-  const nodeTypes = useMemo(() => ({ flowNode: FlowNode }), []);
+  const nodeTypes: NodeTypes = { flowNode: FlowNode };
+
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
   const [isAddingNode, setIsAddingNode] = useState(false);
@@ -28,10 +30,10 @@ export default function Home() {
       y: event.clientY
     })
 
-    const newNode: Node = {
+    const newNode: IFlowNode = {
       id: `node-${nodes.length + 1}`,
       position: canvasPosition,
-      data: { trigger: "hello", response: "world", },
+      data: { trigger: messageTypes[0], response: messageTypes[0], updateNodeData: (d: IFlowNode["data"]) => updateNodeData(newNode.id, d) },
       type: "flowNode", // React Flow node type
     };
 
@@ -58,45 +60,54 @@ export default function Home() {
     setPreviewPosition(canvasPosition);
   };
 
+  const updateNodeData = useCallback((nodeId: string, newData: Partial<IFlowNode["data"]>) => {
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === nodeId
+          ? { ...node, data: { ...node.data, ...newData } }
+          : node
+      )
+    );
+  }, [setNodes]);
+
+
   return (
     <SidebarProvider>
       <BlockSidebar setnodes={handleAddNode} />
-      <div>
-        <div className="h-screen w-screen" onClick={handleMainClick} onMouseMove={handleMouseMove} onDragStart={(event) => event.preventDefault()}>
-          <ReactFlow nodeTypes={nodeTypes} nodes={nodes} edges={edges} draggable={true} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onConnect={handleConnect} fitView>
-            <Background />
-            <Controls />
-            {isAddingNode && previewPosition && (
+      <div className="h-screen w-screen" onClick={handleMainClick} onMouseMove={handleMouseMove} onDragStart={(event) => event.preventDefault()}>
+        <ReactFlow colorMode="dark" nodeTypes={nodeTypes} nodes={nodes} edges={edges} draggable={true} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onConnect={handleConnect} fitView>
+          <Background />
+          <Controls />
+          {isAddingNode && previewPosition && (
+            <div
+              style={{
+                position: "absolute",
+                top: previewPosition?.y ?? 0,
+                left: previewPosition?.x ?? 0,
+                width: "100px",
+                height: "50px",
+                background: "rgba(59, 130, 246, 0.3)", // Faint blue
+                border: "1px dashed rgba(59, 130, 246, 0.5)", // Dashed border
+                borderRadius: "4px",
+                transform: "translate(-50%, -50%)", // Center the ghost node
+                pointerEvents: "none", // Ignore mouse events
+              }}
+            >
+              {/* Optional: Label for the ghost node */}
               <div
                 style={{
-                  position: "absolute",
-                  top: previewPosition?.y ?? 0,
-                  left: previewPosition?.x ?? 0,
-                  width: "100px",
-                  height: "50px",
-                  background: "rgba(59, 130, 246, 0.3)", // Faint blue
-                  border: "1px dashed rgba(59, 130, 246, 0.5)", // Dashed border
-                  borderRadius: "4px",
-                  transform: "translate(-50%, -50%)", // Center the ghost node
-                  pointerEvents: "none", // Ignore mouse events
+                  color: "rgba(59, 130, 246, 0.8)",
+                  textAlign: "center",
+                  lineHeight: "50px",
+                  fontSize: "12px",
+                  fontWeight: "bold",
                 }}
               >
-                {/* Optional: Label for the ghost node */}
-                <div
-                  style={{
-                    color: "rgba(59, 130, 246, 0.8)",
-                    textAlign: "center",
-                    lineHeight: "50px",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Preview
-                </div>
+                Preview
               </div>
-            )}
-          </ReactFlow>
-        </div>
+            </div>
+          )}
+        </ReactFlow>
       </div>
     </SidebarProvider>
   );

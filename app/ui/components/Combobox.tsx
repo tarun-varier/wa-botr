@@ -18,15 +18,17 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { Message } from "@/app/lib/types"
 
 interface IComboboxProps {
-    items: { id: string; value: string; label: string }[],
-    item: string
+    items: Message[],
+    itemLabel: string,
+    setItem: (m: Message) => void,
+    item: Message | undefined
 }
 
-export const Combobox: React.FC<IComboboxProps> = ({ items, item }) => {
+export const Combobox: React.FC<IComboboxProps> = ({ items, itemLabel, setItem, item }) => {
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState("")
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -37,34 +39,34 @@ export const Combobox: React.FC<IComboboxProps> = ({ items, item }) => {
                     aria-expanded={open}
                     className="w-full justify-between"
                 >
-                    {value
-                        ? items.find((framework) => framework.value === value)?.label
-                        : `Select ${item}...`}
+                    {item
+                        ? item.label
+                        : `Select ${itemLabel}...`}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0 pointer-events-auto">
                 <Command>
-                    <CommandInput placeholder={`Search ${item}...`} />
+                    <CommandInput placeholder={`Search ${itemLabel}...`} />
                     <CommandList>
-                        <CommandEmpty>No {item} found.</CommandEmpty>
+                        <CommandEmpty>No {itemLabel} found.</CommandEmpty>
                         <CommandGroup>
-                            {items.map((framework) => (
+                            {items.map((curItem) => (
                                 <CommandItem
-                                    key={framework.value}
-                                    value={framework.value}
-                                    onSelect={(currentValue) => {
-                                        setValue(currentValue === value ? "" : currentValue)
+                                    key={curItem.value}
+                                    value={curItem.value}
+                                    onSelect={() => {
+                                        setItem(curItem)
                                         setOpen(false)
                                     }}
                                 >
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            value === framework.value ? "opacity-100" : "opacity-0"
+                                            curItem.id === item?.id ? "opacity-100" : "opacity-0"
                                         )}
                                     />
-                                    {framework.label}
+                                    {curItem.label}
                                 </CommandItem>
                             ))}
                         </CommandGroup>
