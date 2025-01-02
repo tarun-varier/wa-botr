@@ -9,7 +9,7 @@ import { EditNode } from './EditNode';
 import { Delete, Trash, Trash2 } from 'lucide-react';
 
 
-const FlowNode = ({ id, data }: NodeProps<IFlowNode>) => {
+const FlowNode = ({ id, data, type }: NodeProps<IFlowNode>) => {
     return (
         <Card className={"w-[200px]"}>
             <CardContent className='p-4 pt-0'>
@@ -30,13 +30,13 @@ const FlowNode = ({ id, data }: NodeProps<IFlowNode>) => {
                 </div>
 
                 <div className="w-full flex flex-row">
-                    <EditNode nodeData={data} updateNodeData={data.updateNodeData ? data.updateNodeData : () => { }} />
+                    <EditNode nodeData={data} updateNodeData={data.updateNodeData ? data.updateNodeData : () => console.log("not available")} />
                     <Button className="w-full"><Trash2 /></Button>
                 </div>
             </CardContent>
 
             {/* Handles */}
-            <Handle type="target" position={Position.Top} />
+            {type === "flowNode" && <Handle type="target" position={Position.Top} />}
             <Handle type="source" position={Position.Bottom} />
         </Card>
     );

@@ -31,7 +31,6 @@ export interface IFlowNode {
 
 export interface Message {
     id: string;
-    value: string;
     label: string;
     fields: Field[];
 }
@@ -50,10 +49,12 @@ export interface Rule {
 export interface Property {
     id: string;
     label: string;
+    value: string;
 }
 
 export interface Field {
     id: string;
     label: string;
     operators: Operator[];
+    possibleValues?: { id: string, label: string }[];
 }

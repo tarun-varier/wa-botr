@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader } from "@/components/ui/sidebar";
 import { FC, MouseEventHandler } from "react";
 interface IBlockSidebarProps {
-    setnodes: MouseEventHandler<HTMLButtonElement>
+    addClick: MouseEventHandler<HTMLButtonElement>
+    setNodeType: React.Dispatch<React.SetStateAction<string>>
 };
 
 
@@ -13,9 +14,16 @@ export const BlockSidebar: FC<IBlockSidebarProps> = (props) => {
             <Sidebar >
                 <SidebarHeader>Triggers</SidebarHeader>
                 <SidebarContent style={{ scrollbarWidth: "none" }}>
-                    <SidebarGroup className="flex flex-row w-full">
-                        <Button className="w-full py-8 mx-2" variant={"default"} onClick={props.setnodes} >Add</Button>
-                        <Button className="w-full py-8 mx-2" variant={"default"} >Delete</Button>
+                    <SidebarGroup className="grid grid-cols-2 gap-4 w-full">
+                        <Button className="py-4" variant={"default"} onClick={(e) => {
+                            props.setNodeType("flowStartNode")
+                            props.addClick(e)
+                        }} >Add Start Node</Button>
+                        <Button className="py-4" variant={"default"} onClick={(e) => {
+                            props.setNodeType("flowNode")
+                            props.addClick(e)
+                        }} >Add Node</Button>
+                        <Button className="py-4" variant={"default"} >Delete</Button>
                     </SidebarGroup>
                     <SidebarGroup />
                 </SidebarContent>

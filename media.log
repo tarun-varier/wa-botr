@@ -1,0 +1,60 @@
+ * Serving Flask app 'main'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:4000
+ * Running on http://172.16.196.133:4000
+Press CTRL+C to quit
+{'from': '918075791335',
+ 'id': 'wamid.HBgMOTE4MDc1NzkxMzM1FQIAEhggN0JDRjM2M0VGQzlDNjBBRkJDNTUzNkYyNjRCMjA2NDYA',
+ 'image': {'id': '956269233091572',
+           'mime_type': 'image/jpeg',
+           'sha256': 'f0yRVe2z6F6YkwXInU7N31t6zP/bmW0ZTyFQWIiDIeU='},
+ 'timestamp': '1735699357',
+ 'type': 'image'}
+127.0.0.1 - - [01/Jan/2025 08:12:41] "POST /bot HTTP/1.1" 200 -
+{'contacts': [{'name': {'first_name': 'Achamma', 'formatted_name': 'Achamma'},
+               'phones': [{'phone': '+91 86061 22001',
+                           'type': 'MOBILE',
+                           'wa_id': '918606122001'}]}],
+ 'from': '918075791335',
+ 'id': 'wamid.HBgMOTE4MDc1NzkxMzM1FQIAEhggRDc0QTFFNjFDOThEODgxNjk1Mjc0RDI2NTZDNjYwREYA',
+ 'timestamp': '1735699402',
+ 'type': 'contacts'}
+127.0.0.1 - - [01/Jan/2025 08:13:23] "POST /bot HTTP/1.1" 200 -
+{'from': '918075791335',
+ 'id': 'wamid.HBgMOTE4MDc1NzkxMzM1FQIAEhggNzI0RUU2RTI3OUFEQzZENzMzQUFBQTIyN0YxOUQ5NTQA',
+ 'location': {'latitude': 9.7564943, 'longitude': 76.6503506},
+ 'timestamp': '1735699446',
+ 'type': 'location'}
+127.0.0.1 - - [01/Jan/2025 08:14:06] "POST /bot HTTP/1.1" 200 -
+{'from': '918075791335',
+ 'id': 'wamid.HBgMOTE4MDc1NzkxMzM1FQIAEhggMUExRjE4M0UxOUVCQzdDRTM5OTFBOTg0RDAyNDE5OEIA',
+ 'timestamp': '1735699492',
+ 'type': 'video',
+ 'video': {'id': '587280197236511',
+           'mime_type': 'video/mp4',
+           'sha256': 'eEO+MZ27SozERgZTMi/0yLIOpv6mIRJmXa16JSDDnk0='}}
+127.0.0.1 - - [01/Jan/2025 08:14:55] "POST /bot HTTP/1.1" 200 -
+{'errors': [{'code': 131051,
+             'error_data': {'details': 'Message type is currently not '
+                                       'supported.'},
+             'message': 'Message type unknown',
+             'title': 'Message type unknown'}],
+ 'from': '918075791335',
+ 'id': 'wamid.HBgMOTE4MDc1NzkxMzM1FQIAEhggRTk4QTE5RTlDRTVGQjQ5NDdEQjIyQ0MwQTcxNUZCQUYA',
+ 'timestamp': '1735699560',
+ 'type': 'unsupported'}
+127.0.0.1 - - [01/Jan/2025 08:16:00] "POST /bot HTTP/1.1" 200 -
+^C%
+(bot)  ~/bin/wa-botr/bot/bot-engine
+(bot)  ~/bin/wa-botr/bot/bot-engine p main.py
+ * Serving Flask app 'main'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:4000
+ * Running on http://172.16.196.133:4000
+Press CTRL+C to quit
+Response sent: 401 {'error': {'message': 'Error validating access token: Session has expired on Monday, 30-Dec-24 02:00:00 PST. The current time is Tuesday, 31-Dec-24 21:33:49 PST.', 'type': 'OAuthException', 'code': 190, 'error_subcode': 463, 'fbtrace_id': 'APRIs41Rj0S2_msCqN9myZ8'}}
+127.0.0.1 - - [01/Jan/2025 11:03:49] "POST /bot HTTP/1.1" 200 -

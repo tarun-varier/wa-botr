@@ -53,8 +53,8 @@ export const Combobox: React.FC<IComboboxProps> = ({ items, itemLabel, setItem, 
                         <CommandGroup>
                             {items.map((curItem) => (
                                 <CommandItem
-                                    key={curItem.value}
-                                    value={curItem.value}
+                                    key={curItem.id}
+                                    value={curItem.id}
                                     onSelect={() => {
                                         setItem(curItem)
                                         setOpen(false)
