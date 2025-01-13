@@ -9,6 +9,8 @@ import FlowNode from "./ui/components/FlowNode";
 import { IFlowNode } from "./lib/types";
 import "@xyflow/react/dist/style.css";
 import { messageTypes } from "./lib/progData";
+import JSZip from "jszip";
+
 
 
 export default function Home() {
@@ -27,7 +29,7 @@ export default function Home() {
       nodes: nodes,
       edges: edges
     })
-  }, [edges])
+  }, [nodes, edges])
 
   const handleAddNode = () => {
     setIsAddingNode(true); // Enable node-adding mode
@@ -80,10 +82,32 @@ export default function Home() {
     );
   }, [setNodes]);
 
+  const handleExport = async () => {
+    const zip = new JSZip();
+    zip.file("data.json", JSON.stringify({ nodes, edges }));
+    const engineProg = await fetch("/bot/main.py").then((res) => res.text());
+    zip.file("engine.py", engineProg);
+    const media = zip.folder("media");
+    for (const node of nodes) {
+        if (node.data.response.id === "media") {
+            const file = node.data.properties[0].value;
+            media?.file(file.name, file);
+        }
+    }
+
+    zip.generateAsync({ type: "blob" }).then((content) => {
+        const url = URL.createObjectURL(content);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "export.zip";
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+  }
 
   return (
     <SidebarProvider>
-      <BlockSidebar addClick={handleAddNode} setNodeType={setNodeType} />
+      <BlockSidebar addClick={handleAddNode} setNodeType={setNodeType} onExport={handleExport} />
       <div className="h-screen w-screen" onClick={handleMainClick} onMouseMove={handleMouseMove} onDragStart={(event) => event.preventDefault()}>
         <ReactFlow colorMode="dark" nodeTypes={nodeTypes} nodes={nodes} edges={edges} draggable={true} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onConnect={handleConnect} fitView isValidConnection={(c) => !!(c.source && c.target)}>
           <Background />

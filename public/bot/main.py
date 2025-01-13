@@ -43,13 +43,13 @@ class MessageHandler:
     def check_rules(rules, message):
         for rule in rules:
             operator, value = rule["operator"], rule["value"]
-            if operator == "is" and message != value:
+            if operator == "str-is" and message != value:
                 return False
-            elif operator == "is-not" and message == value:
+            elif operator == "str-is-not" and message == value:
                 return False
-            elif operator == "contains" and value not in message:
+            elif operator == "str-contains" and value not in message:
                 return False
-            elif operator == "not-contains" and value in message:
+            elif operator == "str-not-contains" and value in message:
                 return False
         return True
 
@@ -84,23 +84,81 @@ class BotService:
                 node = self.graph_manager.nodes[node_id]
                 if MessageHandler.trigger_check(message, node):
                     self.state[phone_number][i] = node_id
-                    response = node["properties"][0]["value"]
-                    self.send_response(phone_number, response, phone_id)
+                    d = {n["id"]: n["value"] for n in node["properties"]}
+                    self.send_response(
+                        phone_number, node["response"]["id"],  d, phone_id)
 
-    def send_response(self, to, body, phone_id):
+    def send_response(self, to, t, data, phone_id):
         url = f"https://graph.facebook.com/v21.0/{phone_id}/messages"
         headers = {
             "Authorization": f"Bearer {self.token}",
             "Content-Type": "application/json"
         }
-        payload = {
-            "messaging_product": "whatsapp",
-            "to": to,
-            "type": "text",
-            "text": {
-                "body": body
+
+        if t == "location":
+            payload = {
+                "messaging_product": "whatsapp",
+                "to": to,
+                "type": "location",
+                "location": {
+                        "latitude": data["latitude"],
+                        "longitude": data["longitude"]
+                }
             }
-        }
+        elif t == "contact":
+            payload = {
+                "messaging_product": "whatsapp",
+                "to": to,
+                "type": "contacts",
+                "contacts": [{
+                    "name": {
+                        "first_name": data["first_name"],
+                        "last_name": data["last_name"],
+                        "formatted_name": data["first_name"] + " " + data["last_name"]
+                    },
+                    "phones": [{
+                        "phone": data["phone"],
+                        "wa_id": data["phone"][1:]
+                    }],
+                    "emails": [{
+                        "email": data["email"]
+                    }]
+                }]
+            }
+        elif t == "media":
+            url_t = f"https://graph.facebook.com/v21.0/{phone_id}/media"
+            payload_t = {'type': 'image/jpeg',
+                         'messaging_product': 'whatsapp'}
+            files = [
+                ('file', ('file.jpg', open('file.jpg', 'rb'), 'image/jpeg'))
+            ]
+            headers_t = {
+                "Authorization": headers["Authorization"],
+            }
+
+            response = requests.request(
+                "POST", url_t, headers=headers_t, data=payload_t, files=files).json()
+            pprint(response)
+
+            payload = {
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": to,
+                "type": "image",
+                "image": {
+                    "id": response["id"]
+                }
+            }
+
+        else:
+            payload = {
+                "messaging_product": "whatsapp",
+                "to": to,
+                "type": "text",
+                "text": {
+                    "body": data["message"]
+                }
+            }
         response = requests.post(url, json=payload, headers=headers)
         print("Response sent:", response.status_code, response.json())
 

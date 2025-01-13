@@ -32,12 +32,18 @@ export interface IFlowNode {
 export interface Message {
     id: string;
     label: string;
-    fields: Field[];
+    triggerFields: Field[];
+    responseFields: Field[];
 }
 
 export interface Operator {
     id: string;
     label: string;
+}
+
+export interface Button {
+    id: string;
+    text: string;
 }
 
 export interface Rule {
@@ -47,14 +53,15 @@ export interface Rule {
 }
 
 export interface Property {
+    type: string;
     id: string;
     label: string;
-    value: string;
+    value: string | File | Button[];
 }
 
 export interface Field {
     id: string;
     label: string;
-    operators: Operator[];
+    type: string;
     possibleValues?: { id: string, label: string }[];
 }

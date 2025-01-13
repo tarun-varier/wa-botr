@@ -1,3 +1,4 @@
+import { getOperators } from "@/app/lib/progData";
 import { Field, Rule } from "@/app/lib/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,7 @@ import { FC, useEffect, useState } from "react";
 interface ISettingProps { fields: Field[], data: Rule, setData: (r: Rule) => void };
 
 export const Setting: FC<ISettingProps> = (props) => {
-    const options: { id: string, label: string, field: string }[] = props.fields.map((field) => field.operators.map((operator) => ({ ...operator, field: field.id }))).flat();
+    const options: { id: string, label: string, field: string }[] = props.fields.map((field) => getOperators(field.type).map((operator) => ({ ...operator, field: field.id }))).flat();
     const [selectedField, setSelectedField] = useState<Field>();
     useEffect(() => {
         setSelectedField(props.fields.find((field) => field.id === props.data.field))
@@ -35,7 +36,7 @@ export const Setting: FC<ISettingProps> = (props) => {
                                     <DropdownMenuLabel>{field.label}</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     {
-                                        field.operators.map((operator) => (
+                                        getOperators(field.type).map((operator) => (
                                             <DropdownMenuRadioItem key={operator.id} value={field.id + ":" + operator.id}>{operator.label}</DropdownMenuRadioItem>
                                         ))
                                     }

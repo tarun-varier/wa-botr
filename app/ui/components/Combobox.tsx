@@ -31,7 +31,7 @@ export const Combobox: React.FC<IComboboxProps> = ({ items, itemLabel, setItem, 
     const [open, setOpen] = React.useState(false)
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={open} onOpenChange={setOpen} >
             <PopoverTrigger asChild>
                 <Button
                     variant="outline"

@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader } from "@/components/ui/sidebar";
 import { FC, MouseEventHandler } from "react";
 interface IBlockSidebarProps {
-    addClick: MouseEventHandler<HTMLButtonElement>
-    setNodeType: React.Dispatch<React.SetStateAction<string>>
+    addClick: MouseEventHandler<HTMLButtonElement>;
+    setNodeType: React.Dispatch<React.SetStateAction<string>>;
+    onExport: () => void;
 };
 
 
@@ -23,7 +24,7 @@ export const BlockSidebar: FC<IBlockSidebarProps> = (props) => {
                             props.setNodeType("flowNode")
                             props.addClick(e)
                         }} >Add Node</Button>
-                        <Button className="py-4" variant={"default"} >Delete</Button>
+                        <Button className="py-4" variant={"default"} onClick={props.onExport} >Export</Button>
                     </SidebarGroup>
                     <SidebarGroup />
                 </SidebarContent>
