@@ -19,7 +19,11 @@ export const getOperators = (type: string) => {
     switch (type) {
         case "str":
             return strOperators;
+        case "text":
+            return strOperators;
         case "num":
+            return numOperators;
+        case "phnum":
             return numOperators;
         case "strnum":
             return [...strOperators, ...numOperators];
@@ -33,7 +37,7 @@ export const getOperators = (type: string) => {
 export const MessageField: Field = {
     id: "message",
     label: "Message",
-    type: "strnum",
+    type: "text",
 };
 
 const fileTypes = [
@@ -126,22 +130,20 @@ const fileTypes = [
 
 const locationFields: Field[] =
     [{ id: "latitude", label: "Latitude", type: "num" }, { id: "longitude", label: "Longitude", type: "num" }]
-const contactFields: Field[] = [{ id: "first_name", label: "First Name", type: "str" }, { id: "last_name", label: "Last Name", type: "str" }, { id: "phone", label: "Phone No.", type: "phnum" }, { id: "email", label: "Email", type: "email" }]
+const contactFields: Field[] = [{ id: "first_name", label: "First Name", type: "str" }, { id: "last_name", label: "Last Name", type: "str" }, { id: "phone", label: "Phone No.", type: "phnum" }, { id: "email", label: "Email", type: "str" }]
 
 export const messageTypes: Message[] = [
     { id: "text", label: "Text Message", triggerFields: [MessageField], responseFields: [MessageField] },
     {
         id: "media", label: "Media Message", triggerFields: [{
-            id: "file_type", label: "File Type", type: "filetype", possibleValues: fileTypes
+            id: "mime_type", label: "File Type", type: "filetype", possibleValues: fileTypes
         }], responseFields: [{ id: "file", label: "File", type: "file" }]
     },
     { id: "location", label: "Location Message", triggerFields: locationFields, responseFields: locationFields },
     { id: "contact", label: "Contact Message", triggerFields: contactFields, responseFields: contactFields },
     {
-        id: "interactive", label: "Button Message",
-        triggerFields: [{ id: "value", label: "Value", type: "str" }],
-        responseFields: [{ id: "buttons", label: "Buttons", type: "buttons" }]
+        id: "reply_buttons", label: "Button Message",
+        triggerFields: [{ id: "id", label: "Message ID", type: "str" }],
+        responseFields: [{ id: "text", label: "Text", type: "str" }, { id: "buttons", label: "Buttons", type: "buttons" }]
     },
-    { id: "reply", label: "Reply To Message", triggerFields: [MessageField, { id: "id", label: "Message ID", type: "str" }], responseFields: [MessageField, { id: "id", label: "Message ID", type: "str" }] },
-    { id: "reaction", label: "Reaction Message", triggerFields: [MessageField, { id: "id", label: "Message ID", type: "str" }], responseFields: [MessageField, { id: "id", label: "Message ID", type: "str" }] },
 ];

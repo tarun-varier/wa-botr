@@ -40,25 +40,75 @@ class GraphManager:
 
 class MessageHandler:
     @staticmethod
-    def check_rules(rules, message):
+    def get_attr(obj, t, attr):
+        if t == "text" and attr == "message":
+            return obj["text"]["body"]
+        elif t == "reply_buttons" and attr == "id":
+            return obj["interactive"]["button_reply"]["id"]
+        elif t == "reply_buttons" and attr == "text":
+            return obj["interactive"]["button_reply"]["title"]
+        elif t == "location" and attr == "latitude":
+            return obj["location"]["latitude"]
+        elif t == "location" and attr == "longitude":
+            return obj["location"]["longitude"]
+        elif t == "contact" and attr == "first_name":
+            return obj["contacts"][0]["name"]["first_name"]
+        elif t == "contact" and attr == "last_name":
+            return obj["contacts"][0]["name"]["last_name"]
+        elif t == "contact" and attr == "phone":
+            return obj["contacts"][0]["phones"][0]["phone"]
+        elif t == "contact" and attr == "email":
+            return obj["contacts"][0]["emails"][0]["email"]
+        elif t == "media" and attr == "mime_type":
+            if "video" in obj:
+                return obj["video"]["mime_type"]
+            return obj["image"]["mime_type"]
+        else:
+            return None
+
+    @staticmethod
+    def check_rules(rules, message, t):
         for rule in rules:
-            operator, value = rule["operator"], rule["value"]
-            if operator == "str-is" and message != value:
+            operator, value, field = rule["operator"], rule["value"], rule["field"]
+            m = MessageHandler.get_attr(message, t, field)
+            if operator == "str-is" and m != value:
                 return False
-            elif operator == "str-is-not" and message == value:
+            elif operator == "str-is-not" and m == value:
                 return False
-            elif operator == "str-contains" and value not in message:
+            elif operator == "str-contains" and value not in m:
                 return False
-            elif operator == "str-not-contains" and value in message:
+            elif operator == "str-not-contains" and value in m:
+                return False
+            elif operator == "num-greater-than" and float(str(m)) <= float(value):
+                return False
+            elif operator == "num-less-than" and float(str(m)) >= float(value):
+                return False
+            elif operator == "num-equals" and float(str(m)) != float(value):
+                return False
+            elif operator == "num-not-equals" and float(str(m)) == float(value):
+                return False
+            elif operator == "num-less-than-equals" and float(str(m)) > float(value):
+                return False
+            elif operator == "num-greater-than-equals" and float(str(m)) < float(value):
                 return False
         return True
 
     @staticmethod
     def trigger_check(message, node):
         if node["trigger"]["id"] == "text" and "text" in message and \
-                MessageHandler.check_rules(node["rules"], message["text"]["body"]):
+                MessageHandler.check_rules(node["rules"], message, "text"):
             return True
-        elif "interactive" in message and message["interactive"]["type"] == "list_reply":
+        elif node["trigger"]["id"] == "reply_buttons" and "interactive" in message and \
+                MessageHandler.check_rules(node["rules"], message, "reply_buttons"):
+            return True
+        elif node["trigger"]["id"] == "location" and "location" in message and \
+                MessageHandler.check_rules(node["rules"], message, "location"):
+            return True
+        elif node["trigger"]["id"] == "contact" and "contacts" in message and \
+                MessageHandler.check_rules(node["rules"], message, "contact"):
+            return True
+        elif node["trigger"]["id"] == "media" and ("image" in message or "video" in message) and \
+                MessageHandler.check_rules(node["rules"], message, "media"):
             return True
         return False
 
@@ -130,7 +180,7 @@ class BotService:
             payload_t = {'type': 'image/jpeg',
                          'messaging_product': 'whatsapp'}
             files = [
-                ('file', ('file.jpg', open('file.jpg', 'rb'), 'image/jpeg'))
+                ('file', (data["file"]["name"], open(f'media/{data["file"]["name"]}', 'rb'), data["file"]["type"]))
             ]
             headers_t = {
                 "Authorization": headers["Authorization"],
@@ -150,6 +200,29 @@ class BotService:
                 }
             }
 
+        elif t == "reply_buttons":
+            payload = {
+                "messaging_product": "whatsapp",
+                "to": to,
+                "type": "interactive",
+                "interactive": {
+                    "type": "button",
+                    "body": {
+                        "text": data["text"]
+                    },
+                    "action": {
+                        "buttons": [
+                            {
+                                "type": "reply",
+                                "reply": {
+                                    "id": b["id"],
+                                    "title": b["text"]
+                                }
+                            } for b in data["buttons"]
+                        ]
+                    }
+                }
+            }
         else:
             payload = {
                 "messaging_product": "whatsapp",
@@ -204,3 +277,4 @@ def webhook():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=4000)
+

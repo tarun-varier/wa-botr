@@ -115,6 +115,11 @@ body {
   color: #666;
 }
 
+.preview-section input {
+  font-size: 12px;
+  color: white;
+}
+
 .preview-box {
   background-color: #fff;
   border: 1px solid #ddd;

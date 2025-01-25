@@ -1,4 +1,4 @@
-import { getOperators } from "@/app/lib/progData";
+import { getOperators } from "@/app/lib/constants";
 import { Field, Rule } from "@/app/lib/types";
 import { Button } from "@/components/ui/button";
 import {

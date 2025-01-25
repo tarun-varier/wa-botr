@@ -6,6 +6,7 @@ export interface FlowNodeData {
     rules?: Rule[];
     properties?: Property[];
     updateNodeData?: (d: FlowNodeData) => void;
+    deleteNode?: (id: string) => void;
     [key: string]: unknown;
 }
 
@@ -41,7 +42,7 @@ export interface Operator {
     label: string;
 }
 
-export interface Button {
+export interface ButtonType {
     id: string;
     text: string;
 }
@@ -56,7 +57,7 @@ export interface Property {
     type: string;
     id: string;
     label: string;
-    value: string | File | Button[];
+    value: string | File | ButtonType[];
 }
 
 export interface Field {

@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Combobox } from "./Combobox";
-import { messageTypes } from "@/app/lib/progData";
+import { messageTypes } from "@/app/lib/constants";
 import { Edit, Plus } from "lucide-react";
 import { Rules } from "./Rules";
 import { Properties } from "./Properties";
 import { FlowNodeData } from "@/app/lib/types";
+import { Separator } from "@/components/ui/separator";
 
 interface IEditNodeProps {
   nodeData: FlowNodeData;
@@ -26,10 +27,10 @@ export const EditNode: FC<IEditNodeProps> = ({ nodeData, updateNodeData }) => {
 
   const handleResponseChange = (response: any) => {
     updateNodeData({
-        response: response,
+      response: response,
       properties: response.responseFields.map((f: any) => ({
         ...f,
-        value: "",
+        value: f.type === "buttons" ? [{ id: "button1", text: "Button 1" }] : "",
       })),
     });
   };
@@ -79,6 +80,7 @@ export const EditNode: FC<IEditNodeProps> = ({ nodeData, updateNodeData }) => {
               }
             />
           </div>
+          <Separator />
           <div>
             <h3 className="text-2xl font-bold mb-4">Response</h3>
             <Combobox

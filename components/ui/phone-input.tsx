@@ -84,6 +84,24 @@ const CountrySelect = ({
     options: countryList,
     onChange,
 }: CountrySelectProps) => {
+    const inputRef = React.useRef<HTMLInputElement>(null);
+    const scrollableRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        if (inputRef.current) {
+            // Add your event listener
+            const handleKeyDown = (event: KeyboardEvent) => {
+                console.log("key pressed!");
+            };
+
+            inputRef.current.addEventListener("keydown", handleKeyDown);
+
+            // Cleanup listener on unmount
+            return () => {
+                inputRef.current?.removeEventListener("keydown", handleKeyDown);
+            };
+        }
+    }, []);
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -105,11 +123,11 @@ const CountrySelect = ({
                     />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[300px] p-0">
+            <PopoverContent className="w-[300px] p-0 pointer-events-auto overflow-auto z-50 overflow-anchor-none" onWheel={(e) => e.stopPropagation()}>
                 <Command>
-                    <CommandInput placeholder="Search country..." />
+                    <CommandInput placeholder="Search country..." ref={inputRef} />
                     <CommandList>
-                        <ScrollArea className="h-72">
+                        <ScrollArea className="h-72" ref={scrollableRef}>
                             <CommandEmpty>No country found.</CommandEmpty>
                             <CommandGroup>
                                 {countryList.map(({ value, label }) =>
